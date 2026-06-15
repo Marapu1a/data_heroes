@@ -16,8 +16,11 @@ const TimezoneSchema = z.string().refine(
 );
 
 const TimestampSchema = z.string().refine(
-  (ts) => DateTime.fromISO(ts).isValid,
-  { message: 'Must be a valid ISO 8601 timestamp' },
+  (ts) => {
+    const dt = DateTime.fromISO(ts, { zone: 'utc' });
+    return dt.isValid && ts.endsWith('Z');
+  },
+  { message: 'Must be a valid UTC ISO 8601 timestamp ending with Z (e.g. 2026-01-15T23:00:00Z)' },
 );
 
 export const UserParamsSchema = z.object({
