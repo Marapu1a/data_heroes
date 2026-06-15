@@ -17,7 +17,8 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "fastify": "^4.28.1",
-    "luxon": "^3.5.0"
+    "luxon": "^3.5.0",
+    "zod": "^4.4.3"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
