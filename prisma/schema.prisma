@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationType {
+  marketing
+  transactional
+  security
+  system
+}
+
+enum Channel {
+  email
+  sms
+  push
+  messenger
+}
+
+enum Region {
+  EU
+  US
+  RU
+  GLOBAL
+}
+
+// Valid type×channel pairs + their default enabled state.
+// Absence of a pair means the combination is not supported.
+model DefaultPreference {
+  notificationType NotificationType
+  channel          Channel
+  enabled          Boolean
+
+  @@id([notificationType, channel])
+  @@map("default_preferences")
+}
+
+// Per-user overrides on top of defaults.
+// Only rows that differ from (or explicitly confirm) defaults are stored.
+model UserPreferenceOverride {
+  userId           String
+  notificationType NotificationType
+  channel          Channel
+  enabled          Boolean
+  updatedAt        DateTime         @updatedAt
+
+  @@id([userId, notificationType, channel])
+  @@map("user_preference_overrides")
+}
+
+model UserQuietHours {
+  userId    String   @id
+  enabled   Boolean
+  startTime String   // "HH:mm" 24-hour local time
+  endTime   String   // "HH:mm" 24-hour local time
+  timezone  String   // IANA timezone name, e.g. "Europe/Moscow"
+  updatedAt DateTime @updatedAt
+
+  @@map("user_quiet_hours")
+}
+
+// Presence of a row = deny. No allow-policies.
+model GlobalPolicy {
+  notificationType NotificationType
+  channel          Channel
+  region           Region
+  reason           String
+
+  @@id([notificationType, channel, region])
+  @@map("global_policies")
+}
