@@ -63,4 +63,17 @@ describe('isInQuietHours', () => {
       expect(isInQuietHours('2026-01-15T12:00:00Z', { startTime: '22:00', endTime: '08:00', timezone: 'Europe/Moscow' })).toBe(false);
     });
   });
+
+  describe('DST handling (Europe/Berlin)', () => {
+    // Winter: UTC+1 (CET). 21:00 UTC = 22:00 Berlin → inside 22:00–08:00
+    it('applies winter offset (UTC+1) correctly', () => {
+      expect(isInQuietHours('2026-01-15T21:00:00Z', { startTime: '22:00', endTime: '08:00', timezone: 'Europe/Berlin' })).toBe(true);
+    });
+
+    // Summer: UTC+2 (CEST). 20:00 UTC = 22:00 Berlin → inside 22:00–08:00
+    // Same wall-clock time requires an earlier UTC timestamp than in winter.
+    it('applies summer offset (UTC+2) correctly', () => {
+      expect(isInQuietHours('2026-06-15T20:00:00Z', { startTime: '22:00', endTime: '08:00', timezone: 'Europe/Berlin' })).toBe(true);
+    });
+  });
 });

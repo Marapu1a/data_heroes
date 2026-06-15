@@ -11,6 +11,8 @@ function toMinutes(hhmm: string): number {
   return h * 60 + m;
 }
 
+// Expects pre-validated inputs: ISO 8601 UTC timestamp, IANA timezone name, "HH:mm" times.
+// HTTP-boundary validation is the responsibility of the route layer, not this function.
 export function isInQuietHours(utcTimestamp: string, config: QuietHoursConfig): boolean {
   const { startTime, endTime, timezone } = config;
 

@@ -20,7 +20,7 @@ interface MatchingPolicy {
 export interface EvaluationInput {
   notificationType: NotificationType;
   channel: Channel;
-  region: Region;
+  region: Region; // used by the policy resolver to fetch matchingPolicy before calling this function
   timestamp: string; // ISO 8601 UTC
 
   defaultEnabled: boolean;
